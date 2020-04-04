@@ -16,7 +16,7 @@ def convert_js_bool(py_bool):
     return "true" if py_bool else "false"
 
 
-in_google_collab = 'google.colab' in sys.modules
+in_google_collab = "google.colab" in sys.modules
 
 
 TEMPLATES_PATH = os.path.join(os.path.dirname(__file__), "./templates/")
@@ -27,13 +27,20 @@ CDN_URL = "https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@{}/dist/index.js
     DECKGL_SEMVER
 )
 
+
+def produce_script_tag(destination):
+    with open(join(dirname(__file__), destination), "r") as f:
+        js = f.read()
+    return "<script type=text/javascript>" + js + "</script>"
+
+
 def cdn_picker(offline=False):
     if offline:
-        with open(join(dirname(__file__),'./static/index.js'), 'r') as file:
-            js = file.read()
-        return "<script type=text/javascript>" + js + "</script>"
-
+        index_tag = produce_script_tag("./static/index.js")
+        index_map_tag = produce_script_tag("./static/index.map.js")
+        return "{}\n{}".format(index_tag, index_map_tag)
     return "<script src=" + CDN_URL + "></script>"
+
 
 def render_json_to_html(
     json_input,
